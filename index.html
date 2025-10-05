@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahmoud Chess Engine Web</title>
+    <link rel="stylesheet" href="https://unpkg.com/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.13.4/chess.min.js"></script>
+    <script src="https://unpkg.com/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        #board {
+            width: 400px;
+            margin-bottom: 20px;
+            border: 4px solid #fff;
+        }
+
+        .controls button {
+            background-color: #111;
+            color: #fff;
+            border: 1px solid #fff;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .controls button:hover {
+            background-color: #fff;
+            color: #000;
+        }
+
+        #status {
+            margin-top: 10px;
+            font-size: 1.1em;
+            color: #ccc;
+        }
+
+        .white-1e1d7 {
+            background-color: #fff !important;
+        }
+
+        .black-3c85d {
+            background-color: #000 !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mahmoud Chess Engine Web</h1>
+    <div id="board"></div>
+    <div class="controls">
+        <button id="newGameBtn">New Game</button>
+        <button id="undoBtn">Undo</button>
+        <button id="flipBtn">Flip Board</button>
+        <button id="aiToggleBtn">AI: ON</button>
+        <button id="downloadBtn">Download PGN</button>
+    </div>
+    <div id="status">White to move</div>
+
+    <script>
+        const board = Chessboard('board', {
+            draggable: true,
+            position: 'start',
+            onDrop: onDrop
+        });
+
+        const game = new Chess();
+        let aiEnabled = true;
+        let boardFlipped = false;
+
+        function onDrop(source, target) {
+            const move = game.move({ from: source, to: target, promotion: 'q' });
+            if (move === null) return 'snapback';
+
+            updateStatus();
+
+            if (aiEnabled && !game.game_over()) {
+                setTimeout(makeRandomAIMove, 300);
+            }
+        }
+
+        function makeRandomAIMove() {
+            const moves = game.moves();
+            const move = moves[Math.floor(Math.random() * moves.length)];
+            game.move(move);
+            board.position(game.fen());
+            updateStatus();
+        }
+
+        function updateStatus() {
+            let status = '';
+            let moveColor = game.turn() === 'b' ? 'Black' : 'White';
+            if (game.in_checkmate()) {
+                status = `Game over, ${moveColor} is checkmated.`;
+            } else if (game.in_draw()) {
+                status = 'Draw';
+            } else {
+                status = `${moveColor} to move`;
+                if (game.in_check()) status += `, ${moveColor} is in check.`;
+            }
+            document.getElementById('status').innerText = status;
+        }
+
+        document.getElementById('newGameBtn').onclick = () => {
+            game.reset();
+            board.start();
+            updateStatus();
+        };
+
+        document.getElementById('undoBtn').onclick = () => {
+            game.undo();
+            game.undo();
+            board.position(game.fen());
+            updateStatus();
+        };
+
+        document.getElementById('flipBtn').onclick = () => {
+            boardFlipped = !boardFlipped;
+            board.orientation(boardFlipped ? 'black' : 'white');
+        };
+
+        document.getElementById('aiToggleBtn').onclick = () => {
+            aiEnabled = !aiEnabled;
+            document.getElementById('aiToggleBtn').innerText = `AI: ${aiEnabled ? 'ON' : 'OFF'}`;
+        };
+
+        document.getElementById('downloadBtn').onclick = () => {
+            const blob = new Blob([game.pgn()], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'game.pgn';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        };
+
+        updateStatus();
+    </script>
+</body>
+</html>
