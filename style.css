@@ -17,7 +17,7 @@ body { background:#0b0b0b; color:#eaeaea; font-family: 'Open Sans', Arial, sans-
 .player-panel { width:240px; }
 .player-panel .player-info { text-align:center; padding:12px; border:1px solid #333; border-radius:8px; background:#141414; }
 .player-panel .player-info.active { outline:2px solid #5da3ff; }
-.player-panel img { width:96px; height:96px; border-radius:50%; object-fit:cover; border:2px solid #444; }
+/* Removed legacy 96px image sizing to avoid unintended downscaling; see .player-info img for current size */
 .winning-probability { margin-top:12px; padding:12px; border:1px dashed #333; border-radius:8px; background:#111; }
 .middle-section { display:flex; flex-direction:column; align-items:center; gap:12px; }
 #board { width:520px; }

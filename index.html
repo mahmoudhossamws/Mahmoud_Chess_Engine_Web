@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
     <!-- Local styles (corrected filename) -->
     <link rel="stylesheet" href="style.css">
+    <link rel="preload" as="image" href="images/mahmoud.jpg" imagesrcset="images/mahmoud.jpg 128w, images/mahmoud.jpg 256w" imagesizes="(max-width: 800px) 100px, 128px" fetchpriority="high">
 </head>
 <body>
     <div class="container">
@@ -44,11 +45,12 @@
                         <div class="player-info">
                                 <img 
                                     src="images/mahmoud.jpg"
-                                    srcset="images/mahmoud.jpg 1x, images/mahmoud.jpg 2x"
+                                    srcset="images/mahmoud.jpg 128w, images/mahmoud.jpg 256w"
                                     sizes="(max-width: 800px) 100px, 128px"
                                     width="128" height="128"
                                     alt="Mahmoud's Photo" 
-                                    loading="lazy" 
+                                    loading="eager"
+                                    fetchpriority="high"
                                     decoding="async">
                 <h3>Mahmoud</h3>
                 <p>(Black)</p>
